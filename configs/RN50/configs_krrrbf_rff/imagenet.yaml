@@ -1,0 +1,12 @@
+# #beta: [0.5, 5, 10] #epoch 10
+# beta: [0.01, 0.5, 20] #epoch 1
+# lmbda: [1e-8, 1e-3, 5]
+# #lmbda: [2e-5, 1e-4, 5]
+#beta: [0.5, 5, 10] #epoch 10
+beta: [1, 2, 20] #epoch 1 # for other backbones
+lmbda: [0.001, 0.15, 15]
+
+#lmbda: [2e-5, 1e-4, 5]
+
+# beta: [1.5, 4, 20] #epoch 1 # for main results 
+# lmbda: [0.01, 0.25, 15]
