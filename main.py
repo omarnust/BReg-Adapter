@@ -442,17 +442,5 @@ if __name__ == '__main__':
         res = robustness(args.dataset)
     else:
         res = main(args)
-    if not os.path.exists(f'results/{args.backbone}'):
-        os.makedirs(f'results/{args.backbone}')
 
-    save_path = f'results/{args.backbone}/results_{args.dataset}_{args.augment_epoch}.pt'
-    if os.path.exists(save_path):
-        results = torch.load(save_path)
-    else: 
-        results = {}
-    results[args.model] = res
-    torch.save(results, save_path)
-    print(f'{args.model} lmbda={args.lmbda}: {results[args.model].mean(dim=0).item()}')
-    # save results in a file
-    if args.lmbda > 0:
-        open(f'sensitivity/{args.dataset}.txt', 'a').write(f'{args.model} lmbda={args.lmbda}: {results[args.model].mean(dim=0).item()}\n')
+    print(f'{args.model} lmbda={args.lmbda}: {res.mean(dim=0).item()}')

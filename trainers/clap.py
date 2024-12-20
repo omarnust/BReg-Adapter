@@ -3,8 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from optim import build_optimizer
-from scheduler import build_lr_scheduler
+from .train_utils import build_optimizer, build_lr_scheduler
 from copy import deepcopy
 from tqdm import trange 
 from utils import TensorDataset
