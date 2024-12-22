@@ -28,7 +28,7 @@ def get_arguments():
     parser.add_argument('--noise-label-ratio', type=float, default=0., help='Noise ratio of the labels')
     parser.add_argument('--lmbda', type=float, default=-1, help='lmbda value')
     parser.add_argument('--generate-features', action='store_true', help='If true, generate features regardless if they are already saved')
-    parser.add_argument('--hp-selection', type=str, default='tip-adapter', help='R|Hyperparameter selection. \n- coop: uses min(4, n_shots) from Prompt Learning paper.\n- tip-adapter: uses the entire validation set (used by Tip-Adapter, APE and GDA).\n- imagenet: transfers from imagenet.', choices=['tip-adapter', 'coop', 'clap'])
+    parser.add_argument('--hp-selection', type=str, default='tip-adapter', help='R|Hyperparameter selection. \n- coop: uses min(4, n_shots) from Prompt Learning paper.\n- tip-adapter: uses the entire validation set (used by Tip-Adapter, APE and GDA).\n- imagenet: transfers from imagenet.', choices=['tip-adapter', 'coop', 'imagenet'])
      
     args = parser.parse_args()
     if args.shots == -1 or (type(args.shots) == list and len(args.shots) == -1):
@@ -169,7 +169,7 @@ train_tranform_clean = transforms.Compose([
         transforms.Normalize(mean=(0.48145466, 0.4578275, 0.40821073), std=(0.26862954, 0.26130258, 0.27577711))
     ])
 
-def clip_classifier(classnames, template, clip_model, device='cuda:0'):
+def get_clip_weights(classnames, template, clip_model, device='cuda:0'):
     clip_model = clip_model.to(device)
     with torch.no_grad():
         clip_weights = []

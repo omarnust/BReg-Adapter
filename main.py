@@ -21,11 +21,11 @@ from tqdm import trange
 import json
 
 
-def TIP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def TIP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
         Tip-Adapter: Training-free Adaption of CLIP for Few-shot Classification, ECCV 2022.
     """
-    if 'imagenet' in dataset: 
+    if hp_selection == 'imagenet' or 'imagenet' in dataset: 
         dataset = 'imagenet'
     path = f'./configs/{backbone}/configs_tip/{dataset}.yaml'
     cfg = yaml.load(open(path, 'r'), Loader=yaml.Loader)
@@ -61,7 +61,7 @@ def TIP(vecs, labels, val_features, val_labels, test_features, clip_weights, dat
 
     return test_logits.cpu()
 
-def Zeroshot(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def Zeroshot(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
         Zero-shot CLIP
     """
@@ -70,7 +70,7 @@ def Zeroshot(vecs, labels, val_features, val_labels, test_features, clip_weights
     test_logits = 100. * test_features.float() @ clip_weights.float() 
     return test_logits.cpu()
 
-def GDA(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def GDA(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
         A Hard-to-Beat Baseline for Training-free CLIP-based Adaptation, ICLR 2024.
     """
@@ -107,12 +107,14 @@ def GDA(vecs, labels, val_features, val_labels, test_features, clip_weights, dat
 def RBF_Kernel(X,Y, beta):
     return (-beta*(1-X.float()@Y.float().T)).exp()  
 
-def KRRRBF(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
-    path = f'./configs/{backbone}/configs_krrrbf/{dataset}.yaml'
+def ProKeR(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
+    if hp_selection == 'imagenet':
+        dataset = 'imagenet' # use hps of imagenet
+    path = f'./configs/{backbone}/configs_proker/{dataset}.yaml'
     cfg = yaml.load(open(path, 'r'), Loader=yaml.Loader)
-    if not os.path.exists(f'./configs/{backbone}/configs_krrrbf/{dataset}'):
-        os.makedirs(f'./configs/{backbone}/configs_krrrbf/{dataset}')
-    hp_path = f'./configs/{backbone}/configs_krrrbf/{dataset}/seed_{seed}.json'
+    if not os.path.exists(f'./configs/{backbone}/configs_proker/{dataset}'):
+        os.makedirs(f'./configs/{backbone}/configs_proker/{dataset}')
+    hp_path = f'./configs/{backbone}/configs_proker/{dataset}/seed_{seed}.json'
     best_hp = json.load(open(hp_path, 'r')) if os.path.exists(hp_path) else {}
 
     n_classes = len(labels.unique())
@@ -154,31 +156,32 @@ def KRRRBF(vecs, labels, val_features, val_labels, test_features, clip_weights, 
     test_logits = logits_text + K_XS @ alpha_i
     return test_logits.cpu()
 
-def CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
         CLAP method "A Closer Look at the Few-Shot Adaptation of Large Vision-Language Models" CVPR 2024.
     """
     from trainers.clap import CLAP_Head, train_clap
+    path = f'./configs/{backbone}/configs_clap/hyperparameters.json'
+    trainCfg = json.load(open(path, 'r'))[str(shots)] if os.path.exists(path) else None
     clip_weights = F.normalize(clip_weights, dim=0)
     device = vecs.device
     logits_zs = torch.einsum('sd, cd -> sc', vecs.float(), clip_weights.float().T) # b,c
     model = CLAP_Head(clip_weights.T).to(device)
-    res = train_clap(model, vecs, labels, logits_zs)
+    res = train_clap(model, vecs, labels, logits_zs, trainCfg=trainCfg)
     model = CLAP_Head(clip_weights.T).to(device)     
     model.load_state_dict(res['state'])
     test_logits = validate(model, test_features, device=device)
     return test_logits
 
-def KRR_CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def ProKeR_CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
-        Base learner of CLAP + KRR (without joint training)
+        Base learner of CLAP + ProKeR (without joint training)
     """
     from trainers.clap import CLAP_Head, train_clap
-    # get hps of KRRRBF of imagenet, make sure to run KRRRBF alone before to get its hyperparameters
-    path = f'./configs/{backbone}/configs_krrrbf/imagenet/seed_{seed}.json'
-    best_hp = json.load(open(path, 'r')) if os.path.exists(path) else {}
-    best_beta, best_lmbda = best_hp['beta'], best_hp['lmbda']
-    
+    path = f'./configs/{backbone}/configs_proker_clap/hyperparameters.json' # get hp training of CLAP
+    assert os.path.exists(path), "Path required to get hyperparamters"
+    trainCfg = json.load(open(path, 'r'))[str(shots)] 
+    best_beta, best_lmbda = trainCfg['beta'], trainCfg['lmbda']
     device = vecs.device
     n_classes = len(labels.unique())
     test_features = test_features.to(device)
@@ -197,14 +200,17 @@ def KRR_CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights
     test_logits = logits_text + K_XS @ alpha_i
     return test_logits.cpu()
 
-def KRR_CLAP_joint(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, seed, hp_selection, backbone='RN50'):
+def ProKeR_CLAP_joint(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
-        Jointly train KRR and CLAP
+        Jointly train ProKeR and CLAP
     """
-    from trainers.krr_clap import KRR_CLAP_Head, train_clap
-    path = f'./configs/{backbone}/configs_krrrbf_ft/imagenet/seed_{seed}.json'
-    best_hp = json.load(open(path, 'r')) if os.path.exists(path) else {}
-    best_beta, best_lmbda = best_hp['beta'], best_hp['lmbda']
+    from trainers.proker_clap import ProKeR_CLAP_Head
+    from trainers.clap import train_clap
+    path = f'./configs/{backbone}/configs_proker_clap_joint/hyperparameters.json' # get hp training of CLAP
+    assert os.path.exists(path), "Path required to get hyperparamters"
+    trainCfg = json.load(open(path, 'r'))[str(shots)] 
+    print(trainCfg)
+    best_beta, best_lmbda = trainCfg['beta'], trainCfg['lmbda']
     device = vecs.device
     test_features = test_features.to(device)
     clip_weights = F.normalize(clip_weights, dim=0)
@@ -213,8 +219,8 @@ def KRR_CLAP_joint(vecs, labels, val_features, val_labels, test_features, clip_w
     logits_text_shots = torch.einsum('sd, cd -> sc', vecs.float(), clip_weights.float().T) # b,c
     K_XS = lambda x: RBF_Kernel(x, vecs[:], beta=best_beta) # b,s
     K_SS = RBF_Kernel(vecs[:], vecs[:], beta=best_beta) # s,s
-    model = KRR_CLAP_Head(clip_weights.T, K_XS, K_SS, best_lmbda, vecs, labels).to(device)
-    res = train_clap(model, vecs, labels, logits_text_shots)
+    model = ProKeR_CLAP_Head(clip_weights.T, K_XS, K_SS, best_lmbda, vecs, labels).to(device)
+    res = train_clap(model, vecs, labels, logits_text_shots, trainCfg=trainCfg)
     model.load_state_dict(res['state'])
     test_logits = validate(model, test_features, device=device)
     return test_logits.cpu()
@@ -248,7 +254,7 @@ def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_fea
         vecs = torch.cat(vecs)
         labels = torch.cat(labels)
         torch.save({'vecs':vecs.cpu(), 'labels':labels.cpu()}, shots_path)
-    test_logits = classifier(vecs, labels, val_features, val_labels, test_features, clip_weights, cfg['dataset'], seed=cfg['seed'], hp_selection=cfg['hp_selection'], backbone=cfg['backbone'])
+    test_logits = classifier(vecs, labels, val_features, val_labels, test_features, clip_weights, cfg['dataset'], shots=cfg['shots'], seed=cfg['seed'], hp_selection=cfg['hp_selection'], backbone=cfg['backbone'])
     if label_mapping is not None: # for imagenet-r
         notune_acc = cls_acc(test_logits @ label_mapping.to(test_logits.device), test_labels)  
     else: 
@@ -336,7 +342,7 @@ def main(args):
                 clip_weights = torch.load(clip_weights_path, map_location=args.device).to(args.device)
             except Exception as e:
                 print(e)
-                clip_weights = clip_classifier(classnames, template, clip_model, device=args.device)   
+                clip_weights = get_clip_weights(classnames, template, clip_model, device=args.device)   
                 torch.save(clip_weights.cpu(), clip_weights_path)
             notune_acc = run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path=os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt'), device=args.device)
             notune_accs[str(cfg["seed"])].append(notune_acc)
@@ -422,7 +428,7 @@ def robustness(target_dataset):
                 clip_weights = torch.load(clip_weights_path, map_location=args.device).to(args.device)
             except Exception as e:
                 print(e)
-                clip_weights = clip_classifier(classnames, template, clip_model, device=args.device)   
+                clip_weights = get_clip_weights(classnames, template, clip_model, device=args.device)   
                 torch.save(clip_weights.cpu(), clip_weights_path)
             acc_one_seed = run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path=os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt'), label_mapping=dataset.label_mapping, device=args.device)
             accs[str(cfg["seed"])].append(acc_one_seed)

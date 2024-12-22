@@ -1,0 +1,6 @@
+{"1": {"iters":100, "lr":0.0001, "optimizer":"adamw", "batch_size":64, "weight_decay": 0.01, "scale":1, "lr_scheduler":"cosine", "warmup_type":"linear", "warmup_min_lr": 1e-5, "warmup_iter":50, "eval_freq":20},
+ "2": {"iters":100, "lr":0.0001, "optimizer":"adamw", "batch_size":64, "weight_decay": 0.01, "scale":1, "lr_scheduler":"cosine", "warmup_type":"linear", "warmup_min_lr": 1e-5, "warmup_iter":50, "eval_freq":20},
+ "4": {"iters":200, "lr":0.0001, "optimizer":"adamw", "batch_size":64, "weight_decay": 0.01, "scale":1, "lr_scheduler":"cosine", "warmup_type":"linear", "warmup_min_lr": 1e-5, "warmup_iter":50, "eval_freq":20},
+ "8": {"iters":2000, "lr":0.0001, "optimizer":"adamw", "batch_size":64, "weight_decay": 0.01, "scale":1, "lr_scheduler":"cosine", "warmup_type":"linear", "warmup_min_lr": 1e-5, "warmup_iter":50, "eval_freq":20},
+ "16": {"iters":2000, "lr":0.0001, "optimizer":"adamw", "batch_size":64, "weight_decay": 0.01, "scale":1, "lr_scheduler":"cosine", "warmup_type":"linear", "warmup_min_lr": 1e-5, "warmup_iter":50, "eval_freq":20}
+}

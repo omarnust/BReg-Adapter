@@ -84,11 +84,12 @@ class CLAP_Head(nn.Module):
             assert False
         return torch.mean(self.alpha_constraint * disimilitude)
 
-def train_clap(model, shots, labels, logits_zs): 
+def train_clap(model, shots, labels, logits_zs, trainCfg=None): 
     """
         Training routine of clap
     """
-    trainCfg = {'iters':2000, 'lr':0.0001, 'optimizer':'adamw', 'batch_size':64, 'weight_decay': 0.01, 'scale':1, 'lr_scheduler':'cosine', 'warmup_type':'linear', 'warmup_min_lr': 1e-5, 'warmup_iter':50, 'eval_freq':20}
+    if trainCfg is None: # default values 
+        trainCfg = {'iters':2000, 'lr':0.0001, 'optimizer':'adamw', 'batch_size':64, 'weight_decay': 0.01, 'scale':1, 'lr_scheduler':'cosine', 'warmup_type':'linear', 'warmup_min_lr': 1e-5, 'warmup_iter':50, 'eval_freq':20}
     criterion = nn.CrossEntropyLoss()
     device = shots.device
     optimizer = build_optimizer([{'params':model.parameters()}], trainCfg['optimizer'], lr=trainCfg['lr'], weight_decay=trainCfg['weight_decay'])

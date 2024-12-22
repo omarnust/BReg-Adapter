@@ -1,3 +1,0 @@
-sigma: [0.5, 1.5, 10] # min, max, n_steps
-lmbda: [1e-7, 1e-6, 1]
-M: 20000
