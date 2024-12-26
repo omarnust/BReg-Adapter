@@ -120,7 +120,7 @@ class OxfordPets(DatasetBase):
                 out.append(item)
             return out
         
-        print(f'Reading split from {filepath}')
+        #print(f'Reading split from {filepath}')
         split = read_json(filepath)
         train = _convert(split['train'])
         val = _convert(split['val'])

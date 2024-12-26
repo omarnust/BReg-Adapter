@@ -7,6 +7,23 @@ from .train_utils import build_optimizer, build_lr_scheduler
 from copy import deepcopy
 from tqdm import trange 
 from utils import TensorDataset
+import json 
+from utils import validate
+def CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
+    """
+        CLAP method "A Closer Look at the Few-Shot Adaptation of Large Vision-Language Models" CVPR 2024.
+    """
+    path = f'./configs/{backbone}/configs_clap/hyperparameters.json'
+    trainCfg = json.load(open(path, 'r'))[str(shots)] if os.path.exists(path) else None
+    clip_weights = F.normalize(clip_weights, dim=0)
+    device = vecs.device
+    logits_zs = torch.einsum('sd, cd -> sc', vecs.float(), clip_weights.float().T) # b,c
+    model = CLAP_Head(clip_weights.T).to(device)
+    res = train_clap(model, vecs, labels, logits_zs, trainCfg=trainCfg)
+    model = CLAP_Head(clip_weights.T).to(device)     
+    model.load_state_dict(res['state'])
+    test_logits = validate(model, test_features, device=device)
+    return test_logits
 
 class CLAP_Head(nn.Module): 
     def __init__(self, init): 

@@ -33,15 +33,19 @@ The running configurations can be modified in `configs`.
 ### Running
 For few-shot classification:
 ```bash
-   python main.py --model ProKeR --shots 1 2 4 8 16 --dataset caltech101 --augment-epoch 10
+   python main.py --method ProKeR --shots 1 2 4 8 16 --dataset caltech101 --augment-epoch 10
 ```
 
 If GPU memory is saturated, consider using fewer data augmentations --augment-epoch
 
 ## Running Options
-Multiple methods are implemented: 
-- Tip-Adapter
-- GDA
+Multiple methods are implemented:
+- ZeroShot (Zero-shot classifier) 
+- TIP (Tip-Adapter)
+- GDA 
+- CLAP 
+- ProKeR (ours)
+- ProKeR_CLAP_joint (ours ProKeR + CLAP)
 
 ## Acknowledgement
 

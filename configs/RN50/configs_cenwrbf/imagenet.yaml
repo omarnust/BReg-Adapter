@@ -1,3 +1,0 @@
-lmbda: [1, 15, 20]
-sigma: [1, 10, 20]
-batch_size: 20000

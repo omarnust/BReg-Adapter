@@ -4,7 +4,5 @@ numpy
 scipy 
 pandas
 matplotlib
-gdown
 ftfy
 regex
-cupy-cuda11x
