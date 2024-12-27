@@ -62,8 +62,8 @@ def main(args):
     if not os.path.exists(test_path):
         os.makedirs(test_path)
         
-    if os.path.exists("/nasbrain/y17bendo/cache"):
-        clip_model, preprocess = clip.load(backbone_names.get(cfg['backbone'], cfg['backbone']), device=args.device, download_root="/nasbrain/y17bendo/cache")
+    if os.path.exists(args.cache_dir):
+        clip_model, preprocess = clip.load(backbone_names.get(cfg['backbone'], cfg['backbone']), device=args.device, download_root=args.cache_dir)
         clip_model.eval()
         clip_model = clip_model.float().to(args.device)
         for p in clip_model.parameters():

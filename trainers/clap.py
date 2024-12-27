@@ -9,6 +9,7 @@ from tqdm import trange
 from utils import TensorDataset
 import json 
 from utils import validate
+
 def CLAP(vecs, labels, val_features, val_labels, test_features, clip_weights, dataset, shots, seed, hp_selection, backbone='RN50'):
     """
         CLAP method "A Closer Look at the Few-Shot Adaptation of Large Vision-Language Models" CVPR 2024.

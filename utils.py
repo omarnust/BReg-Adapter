@@ -25,6 +25,7 @@ def get_arguments():
     parser.add_argument('--dataset-path', type=str, default='/nasbrain/datasets', help='path where datasets are stored')
     parser.add_argument('--shots-path', type=str, default='/nasbrain/y17bendo/clip_cache/', help='path where to store shot features')
     parser.add_argument('--test-path', type=str, default='/nasbrain/y17bendo/GDA/', help='paths where to store validation / test features and clip weights')
+    parser.add_argument('--cache-dir', type=str, default='/nasbrain/y17bendo/cache/', help='cache directory')
     parser.add_argument('--augment-epoch', type=int, default=10, help='nb of augmentations for shots')
     parser.add_argument('--shots', nargs='+', type=int, default=-1, help='number of shots')
     parser.add_argument('--seeds', nargs='+', type=int, default=-1, help='seeds')
