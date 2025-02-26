@@ -1,4 +1,5 @@
 <h1 align='center' style="text-align:center; font-weight:bold; font-size:2.0em;letter-spacing:2.0px;"> ProKeR: A Kernel Perspective on Few-Shot Adaptation of Large Vision-Language Models </h1>
+<p align="center">🎉 Paper accepted at <strong>CVPR 2025</strong>! 🎉</p>
 
 <p align='center' style="text-align:center;font-size:1.25em;">
     <a href="https://zhengbo.wang/" target="_blank" style="text-decoration: none;">Yassir Bendou<sup>1</sup></a>&nbsp;,&nbsp;
@@ -53,6 +54,12 @@ This repo benefits from [Tip-Adapter](https://github.com/gaopengcuhk/Tip-Adapter
 
 ## Citation
 ```latex
+@article{ProKeR,
+  title={A Kernel Perspective on Training-Free Few-Shot Adaptation of Large Vision-Language Models},
+  author={Bendou, Yassir and Ouasfi, Amine and Gripon, Vincent and Boukhayma, Adnane}
+  journal   = {arXiv preprint},
+  url       = {https://arxiv.org/abs/2501.11175}
+}
 ```
 
 ## Contact
