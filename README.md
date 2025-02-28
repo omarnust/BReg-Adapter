@@ -2,10 +2,10 @@
 <p align="center">🎉 Paper accepted at <strong>CVPR 2025</strong>! 🎉</p>
 
 <p align='center' style="text-align:center;font-size:1.25em;">
-    <a href="https://zhengbo.wang/" target="_blank" style="text-decoration: none;">Yassir Bendou<sup>1</sup></a>&nbsp;,&nbsp;
-    <a href="https://liangjian.xyz/" target="_blank" style="text-decoration: none;">Amine Ouasfi<sup>2</sup></a>&nbsp;,&nbsp;
-    <a href="https://tomsheng21.github.io/" target="_blank" style="text-decoration: none;">Vincent Gripon<sup>1</sup></a>&nbsp;,&nbsp;
-    <a href="https://sites.google.com/site/pinyuchenpage" target="_blank" style="text-decoration: none;">Adnane Boukhayma<sup>2</sup></a>&nbsp;,&nbsp;
+    <a href="https://scholar.google.fr/citations?user=Hfzg6rcAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Yassir Bendou<sup>1</sup></a>&nbsp;,&nbsp;
+    <a href="https://scholar.google.fr/citations?user=IdcK7TcAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Amine Ouasfi<sup>2</sup></a>&nbsp;,&nbsp;
+    <a href="https://scholar.google.fr/citations?user=n3IKEqgAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Vincent Gripon<sup>1</sup></a>&nbsp;,&nbsp;
+    <a href="https://scholar.google.fr/citations?user=ayfaw7AAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Adnane Boukhayma<sup>2</sup></a>&nbsp;,&nbsp;
 	<br>
 <sup>1</sup>IMT Atlantique&nbsp;&nbsp;&nbsp;
 <sup>2</sup>INRIA&nbsp;&nbsp;&nbsp;
