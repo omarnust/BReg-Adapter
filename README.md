@@ -1,8 +1,6 @@
 <h1 align='center' style="text-align:center; font-weight:bold; font-size:2.0em;letter-spacing:2.0px;"> ProKeR: A Kernel Perspective on Few-Shot Adaptation of Large Vision-Language Models </h1>
 <p align="center" style="margin: 0;">🎉 Paper accepted at <strong>CVPR 2025</strong>! 🎉</p>
-<div style="text-align: center">
-<a href="https://ybendou.github.io/ProKeR/" style="font-size:1.25em;">Project Page</a>
-</div>
+
 <p align='center' style="text-align:center;font-size:1.25em;">
     <a href="https://scholar.google.fr/citations?user=Hfzg6rcAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Yassir Bendou<sup>1</sup></a>&nbsp;,&nbsp;
     <a href="https://scholar.google.fr/citations?user=IdcK7TcAAAAJ&hl=fr&oi=ao" target="_blank" style="text-decoration: none;">Amine Ouasfi<sup>2</sup></a>&nbsp;,&nbsp;
