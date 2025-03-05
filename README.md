@@ -11,19 +11,25 @@
 <sup>2</sup>INRIA&nbsp;&nbsp;&nbsp;
 </p>
 
+![Alt text](static/proker_pipeline.png)
+
 ## Requirements
 ### Installation
+#### Using conda
 Create a conda environment and install dependencies:
 ```
 conda create -n h2b python=3.9
 conda activate h2b
 
 pip install -r requirements.txt
-
-# Install the according versions of torch and torchvision
-conda install pytorch torchvision cudatoolkit
 ```
-
+#### Using uv
+If you prefer to use uv:
+```
+uv venv --python 3.9
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
 ### Dataset
 Follow [DATASET.md](DATASET.md) to install ImageNet and other datasets referring to [CoOp](https://github.com/KaiyangZhou/CoOp).
 
@@ -41,12 +47,15 @@ If GPU memory is saturated, consider using fewer data augmentations --augment-ep
 
 ## Running Options
 Multiple methods are implemented:
-- ZeroShot (Zero-shot classifier) 
-- TIP (Tip-Adapter)
-- GDA 
-- CLAP 
-- ProKeR (ours)
-- ProKeR_CLAP_joint (ours ProKeR + CLAP)
+| Name                  | Details                        |
+|-----------------------|------------------------------------|
+| ZeroShot             | [CLIP](https://arxiv.org/pdf/2103.00020)               |
+| TIP                  | [Tip-Adapter: Training-free CLIP-Adapter for Better Vision-Language Modeling](https://arxiv.org/pdf/2111.03930)                       |
+| GDA                  | [A Hard-to-Beat Baseline for Training-free CLIP-based Adaptation](https://arxiv.org/pdf/2402.04087)                             |
+| CLAP                 | [A Closer Look at the Few-Shot Adaptation of Large Vision-Language Models](https://arxiv.org/pdf/2312.12730)                               |
+| ProKeR               | ProKeR (ours)                      |
+| ProKeR_CLAP_joint    | ProKeR (ours) + [CLAP](https://arxiv.org/pdf/2312.12730) |
+
 
 ## Acknowledgement
 
