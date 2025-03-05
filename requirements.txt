@@ -6,3 +6,6 @@ pandas
 matplotlib
 ftfy
 regex
+torch 
+torchvision
+cudatoolkit
