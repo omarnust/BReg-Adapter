@@ -11,6 +11,16 @@
 <sup>2</sup>INRIA&nbsp;&nbsp;&nbsp;
 </p>
 
+<p align='center';>
+
+</p>
+<p align='center' style="text-align:center;font-size:2.5 em;">
+<b>
+    <a href="https://arxiv.org/abs/2501.11175" target="_blank" style="text-decoration: none;">[Paper]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://ybendou.github.io/ProKeR/" target="_blank" style="text-decoration: none;">[Project Page]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/ybendou/ProKeR" target="_blank" style="text-decoration: none;">[Code]</a>
+</b>
+</p>
+
+
 ![Alt text](static/proker_pipeline.png)
 
 ## Requirements
