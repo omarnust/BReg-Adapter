@@ -1,0 +1,14 @@
+{
+  "method": "BiReg",
+  "dataset": "caltech101",
+  "backbone": "RN50",
+  "hp_selection": "tip-adapter",
+  "augment_epoch": 10,
+  "results": {
+    "1": 88.36,
+    "2": 89.21,
+    "4": 90.8,
+    "8": 92.16,
+    "16": 93.43
+  }
+}

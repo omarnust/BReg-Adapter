@@ -15,6 +15,8 @@ from datasets.utils import build_data_loader
 import clip
 from utils import *
 from trainers import *
+from pathlib import Path
+from datetime import datetime
 
 def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path, label_mapping=None, device='cuda:0'):
     """
@@ -230,3 +232,37 @@ if __name__ == '__main__':
         res = main(args)
 
     print(f'{args.method} on {args.dataset}:', {k:round(v, 2) for k,v in zip(args.shots, res.mean(dim=0).tolist())})
+
+    # save results to json
+    results = {
+      "method": args.method,
+      "dataset": args.dataset,
+      "backbone": args.backbone,
+      "hp_selection": args.hp_selection,
+      "augment_epoch": args.augment_epoch, 
+      "results": {
+          str(k): round(v, 2)
+          for k, v in zip(args.shots, res.mean(dim=0).tolist())
+      }
+    }
+
+    filename = (
+      f"results_"
+      f"{args.method}_"
+      f"{args.dataset}"
+    )
+    out_dir = Path("results")
+    out_dir.mkdir(exist_ok=True)
+
+    path = out_dir / f"{filename}.json"
+
+    if path.exists():
+      timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+      path = out_dir / f"{filename}_{timestamp}.json"
+
+    # write json
+    with open(path, "w") as f:
+        json.dump(results, f, indent=2)
+
+    print(f"Saved results to {path}")
+

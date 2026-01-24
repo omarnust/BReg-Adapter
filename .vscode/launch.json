@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug ProKeR (Caltech101)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--method",
+        "BiReg",
+        "--shots",
+        "1",
+        "2",
+        "4",
+        "8",
+        "16",
+        "--dataset",
+        "caltech101",
+        "--augment-epoch",
+        "10",
+        "--device",
+        "mps"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  ]
+}

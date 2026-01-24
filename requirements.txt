@@ -8,4 +8,6 @@ ftfy
 regex
 torch 
 torchvision
-cudatoolkit
+gdown
+openai-clip
+#cudatoolkit

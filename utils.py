@@ -22,10 +22,10 @@ def get_arguments():
     parser = argparse.ArgumentParser(formatter_class=SmartFormatter)
     parser.add_argument('--dataset', type=str, required=True, help='dataset')
     parser.add_argument('--method', type=str, default='tip', help='method to use')
-    parser.add_argument('--dataset-path', type=str, default='/nasbrain/datasets', help='path where datasets are stored')
-    parser.add_argument('--shots-path', type=str, default='/nasbrain/y17bendo/ProKeR/shots/', help='path where to store shot features')
-    parser.add_argument('--test-path', type=str, default='/nasbrain/y17bendo/ProKeR/test/', help='paths where to store validation / test features and clip weights')
-    parser.add_argument('--cache-dir', type=str, default='/nasbrain/y17bendo/cache/', help='cache directory')
+    parser.add_argument('--dataset-path', type=str, default='/Users/oarif/Documents/datasets', help='path where datasets are stored')
+    parser.add_argument('--shots-path', type=str, default='./cache_dir/shots/', help='path where to store shot features')
+    parser.add_argument('--test-path', type=str, default='./cache_dir/test/', help='paths where to store validation / test features and clip weights')
+    parser.add_argument('--cache-dir', type=str, default='./cache_dir/cache', help='cache directory')
     parser.add_argument('--augment-epoch', type=int, default=10, help='nb of augmentations for shots')
     parser.add_argument('--shots', nargs='+', type=int, default=-1, help='number of shots')
     parser.add_argument('--seeds', nargs='+', type=int, default=-1, help='seeds')
@@ -208,10 +208,10 @@ class TensorDataset(torch.utils.data.Dataset):
     def __len__(self):
         return self.input_tensor.size(0)
 
-def save_hps(hps, directory_path, seed):
+def save_hps(hps, directory_path, seed, shots):
     if not os.path.exists(directory_path): 
         os.makedirs(directory_path)
-    path = os.path.join(directory_path, f'seed_{seed}.json')
+    path = os.path.join(directory_path, f'seed{seed}_shots{shots}.json')
     json.dump(hps, open(path, 'w'))
 
 def validate(model, val_features, batch_size=256, device='cuda:0'): 
