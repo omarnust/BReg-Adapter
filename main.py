@@ -132,8 +132,12 @@ def main(args):
                 clip_weights = torch.load(clip_weights_path, map_location=args.device).to(args.device)
             except Exception as e:
                 print(e)
+                dataset = ImageNet(cfg, cfg['root_path'], cfg['shots'], preprocess)
+                classnames, template = dataset.classnames, dataset.template
+
                 clip_weights = get_clip_weights(classnames, template, clip_model, device=args.device)   
                 torch.save(clip_weights.cpu(), clip_weights_path)
+                
             acc = run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path=os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt'), device=args.device)
             accs[str(cfg["seed"])].append(acc)
             print(f"{shots}-shots : {acc:.2f}%")

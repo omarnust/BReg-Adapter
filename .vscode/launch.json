@@ -11,7 +11,7 @@
       
       "args": [
         "--method",
-        "ProKeR",
+        "zeroshot",
         "--shots",
         "1",
         "2",

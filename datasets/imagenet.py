@@ -185,6 +185,7 @@ imagenet_templates = ["itap of a {}.",
                         "art of the {}.",
                         "a photo of the small {}."]
 
+
 def listdir_nohidden(path, sort=False):
     """List non-hidden items in a directory.
 
