@@ -26,12 +26,14 @@ def get_arguments():
     parser.add_argument('--shots-path', type=str, default='./cache_dir/shots/', help='path where to store shot features')
     parser.add_argument('--test-path', type=str, default='./cache_dir/test/', help='paths where to store validation / test features and clip weights')
     parser.add_argument('--cache-dir', type=str, default='./cache_dir/cache', help='cache directory')
+    parser.add_argument('--output-dir', type=str, default='./results', help='results directory')
     parser.add_argument('--augment-epoch', type=int, default=10, help='nb of augmentations for shots')
     parser.add_argument('--shots', nargs='+', type=int, default=-1, help='number of shots')
     parser.add_argument('--seeds', nargs='+', type=int, default=-1, help='seeds')
     parser.add_argument('--device', type=str, default='cuda:0', help='device')
     parser.add_argument('--backbone', type=str, default='RN50', help='backbone')
     parser.add_argument('--hp-selection', type=str, default='tip-adapter', help='R|Hyperparameter selection. \n- coop: uses min(4, n_shots) from Prompt Learning paper.\n- tip-adapter: uses the entire validation set (used by Tip-Adapter, APE and GDA).\n- imagenet: transfers from imagenet.', choices=['tip-adapter', 'coop', 'imagenet'])
+
      
     args = parser.parse_args()
     if args.shots == -1 or (type(args.shots) == list and len(args.shots) == -1):

@@ -88,8 +88,8 @@ def BiReg(vecs, labels, val_features, val_labels, test_features, clip_weights, d
     
     # Bilateral regularization
     left = 1/best_lmbda * K_SS + torch.eye(vecs.size(0)).to(device)
-    #right = A @ A.T + best_gamma * torch.eye(A.shape[0]).to(device)
-    right = 1/best_gamma * A @ A.T + torch.eye(A.shape[0]).to(device)
+    right = A @ A.T + best_gamma * torch.eye(A.shape[0]).to(device)
+    #right = 1/best_gamma * A @ A.T + torch.eye(A.shape[0]).to(device)
     
     middle = (cache - logits_text_shots) @ A.T
     

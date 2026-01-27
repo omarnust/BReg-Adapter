@@ -96,7 +96,12 @@ def main(args):
                 test_loader = build_data_loader(data_source=dataset.test, batch_size=256, is_train=False, tfm=preprocess, shuffle=False)
                 val_loader = build_data_loader(data_source=dataset.val, batch_size=256, is_train=False, tfm=preprocess, shuffle=False)
                 test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test_s{seed}_k{shots}.pt'), device=args.device)
-                val_features, val_labels = pre_load_features(clip_model, val_loader, load_path=os.path.join(test_path, f'val_s{seed}_k{shots}.pt'), device=args.device, n_shots=-1 if args.hp_selection == 'tip-adapter' else shots)
+
+                if args.hp_selection != 'imagenet':
+                  val_features, val_labels = pre_load_features(clip_model, val_loader, load_path=os.path.join(test_path, f'val_s{seed}_k{shots}.pt'), device=args.device, n_shots=-1 if args.hp_selection == 'tip-adapter' else shots)
+                  
+                else:
+                  val_features, val_labels = None, None
                 classnames, template = dataset.classnames, dataset.template
             else:
                 try: 
@@ -222,6 +227,8 @@ def main_robustness(target_dataset):
         accuracies.append(accs[seed])
     accuracies = torch.tensor(accuracies)
     return accuracies
+
+
 if __name__ == '__main__':
     args = get_arguments()
     robust_imagenet = ['imagenet-v2','imagenet-sketch','imagenet-a','imagenet-r']
@@ -251,7 +258,7 @@ if __name__ == '__main__':
       f"{args.method}_"
       f"{args.dataset}"
     )
-    out_dir = Path("results")
+    out_dir = Path(args.output_dir)
     out_dir.mkdir(exist_ok=True)
 
     path = out_dir / f"{filename}.json"

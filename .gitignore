@@ -79,6 +79,7 @@ target/
 .ipynb_checkpoints
 
 cache_dir/
+results/
 
 # IPython
 profile_default/

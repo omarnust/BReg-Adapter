@@ -8,9 +8,10 @@
       "program": "${workspaceFolder}/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
+      
       "args": [
         "--method",
-        "BiReg",
+        "ProKeR",
         "--shots",
         "1",
         "2",
@@ -18,9 +19,11 @@
         "8",
         "16",
         "--dataset",
-        "caltech101",
+        "imagenet",
         "--augment-epoch",
         "10",
+        "--hp-selection",
+        "imagenet",
         "--device",
         "mps"
       ],
