@@ -124,8 +124,9 @@ def main(args):
                 
             test_features = test_features.cpu()
             test_labels = test_labels.cpu()
-            val_features = val_features.cpu()
-            val_labels = val_labels.cpu()
+            if val_features is not None:
+              val_features = val_features.cpu()
+              val_labels = val_labels.cpu()
             
             try:
                 clip_weights = torch.load(clip_weights_path, map_location=args.device).to(args.device)
