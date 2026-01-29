@@ -45,6 +45,10 @@ def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_fea
         labels = torch.cat(labels)
         torch.save({'vecs':vecs.cpu(), 'labels':labels.cpu()}, shots_path)
     test_logits = classifier(vecs.to(device), labels.to(device), val_features, val_labels, test_features, clip_weights, cfg['dataset'], shots=cfg['shots'], seed=cfg['seed'], hp_selection=cfg['hp_selection'], backbone=cfg['backbone'])
+    if device != 'cuda':
+      del vecs, labels
+      torch.cuda.empty_cache()
+
     if label_mapping is not None: # for imagenet-r
         notune_acc = cls_acc(test_logits @ label_mapping.to(test_logits.device), test_labels)  
     else: 
@@ -262,6 +266,16 @@ def main_robustness(target_dataset):
             acc = run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path=os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt'), label_mapping=dataset.label_mapping, device=args.device)
             accs[str(cfg["seed"])].append(acc)
             print(f"{shots}-shots : {acc:.2f}%")
+
+            if args.device != 'cuda':
+              torch.cuda.empty_cache()
+              torch.cuda.synchronize()
+
+        if args.device != 'cuda':
+          del train_loader_cache, test_loader
+          torch.cuda.empty_cache()
+          
+          
 
     accuracies = []
     for seed in ["1", "2", "3"]:
