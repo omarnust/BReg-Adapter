@@ -95,26 +95,26 @@ def main(args):
                 train_loader_cache = build_data_loader(data_source=dataset.train_x, batch_size=256, tfm=train_tranform if cfg['augment_epoch']>1 else train_tranform_clean, is_train=True, shuffle=False)
                 test_loader = build_data_loader(data_source=dataset.test, batch_size=256, is_train=False, tfm=preprocess, shuffle=False)
                 val_loader = build_data_loader(data_source=dataset.val, batch_size=256, is_train=False, tfm=preprocess, shuffle=False)
-                test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test_s{seed}_k{shots}.pt'), device=args.device)
+                test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)
 
                 if args.hp_selection != 'imagenet':
-                  val_features, val_labels = pre_load_features(clip_model, val_loader, load_path=os.path.join(test_path, f'val_s{seed}_k{shots}.pt'), device=args.device, n_shots=-1 if args.hp_selection == 'tip-adapter' else shots)
+                  val_features, val_labels = pre_load_features(clip_model, val_loader, load_path=os.path.join(test_path, f'val.pt'), device=args.device, n_shots=-1 if args.hp_selection == 'tip-adapter' else shots)
                   
                 else:
                   val_features, val_labels = None, None
                 classnames, template = dataset.classnames, dataset.template
-            else:
+            else: # imagenet
                 try: 
                     if not os.path.exists(os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt')):
                         assert 1==2, 'get a loader'
                     train_loader_cache, test_loader = None, None
-                    test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test_s{seed}_k{shots}.pt'), device=args.device)   
+                    test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)   
                     classnames, template = None, None
                 except: 
                     dataset = ImageNet(cfg, cfg['root_path'], cfg['shots'], preprocess)
                     train_loader_cache = torch.utils.data.DataLoader(dataset.train, batch_size=256, num_workers=8, shuffle=False)
                     test_loader = torch.utils.data.DataLoader(dataset.test, batch_size=64, num_workers=8, shuffle=False)
-                    test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test_s{seed}_k{shots}.pt'), device=args.device)   
+                    test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)   
                     classnames, template = dataset.classnames, dataset.template
                 
                 # on imagenet, val and test are the same:
@@ -137,7 +137,7 @@ def main(args):
 
                 clip_weights = get_clip_weights(classnames, template, clip_model, device=args.device)   
                 torch.save(clip_weights.cpu(), clip_weights_path)
-                
+
             acc = run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path=os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt'), device=args.device)
             accs[str(cfg["seed"])].append(acc)
             print(f"{shots}-shots : {acc:.2f}%")

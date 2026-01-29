@@ -92,8 +92,8 @@ def pre_load_features(clip_model, loader, norm=True, load_path='', device='cuda:
                 image_features = clip_model.encode_image(images)
                 if norm:
                     image_features /= image_features.norm(dim=-1, keepdim=True) 
-                features.append(image_features)
-                labels.append(target)
+                features.append(image_features.cpu())
+                labels.append(target.cpu())
 
         features, labels = torch.cat(features), torch.cat(labels)         
         if load_path != '':
