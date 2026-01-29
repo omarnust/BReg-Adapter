@@ -44,7 +44,7 @@ def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_fea
         vecs = torch.cat(vecs)
         labels = torch.cat(labels)
         torch.save({'vecs':vecs.cpu(), 'labels':labels.cpu()}, shots_path)
-    test_logits = classifier(vecs, labels, val_features, val_labels, test_features, clip_weights, cfg['dataset'], shots=cfg['shots'], seed=cfg['seed'], hp_selection=cfg['hp_selection'], backbone=cfg['backbone'])
+    test_logits = classifier(vecs.to(device), labels.to(device), val_features, val_labels, test_features, clip_weights, cfg['dataset'], shots=cfg['shots'], seed=cfg['seed'], hp_selection=cfg['hp_selection'], backbone=cfg['backbone'])
     if label_mapping is not None: # for imagenet-r
         notune_acc = cls_acc(test_logits @ label_mapping.to(test_logits.device), test_labels)  
     else: 
