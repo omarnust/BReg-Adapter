@@ -11,10 +11,11 @@
       
       "args": [
         "--method",
-        "zeroshot",
-        "--shots",
-        "1",
+        "ProKeR",
+        "--seed",
         "2",
+        "3",
+        "--shots",
         "4",
         "8",
         "16",

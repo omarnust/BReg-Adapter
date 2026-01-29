@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+from genericpath import exists
 import os
 import random
 from tqdm import tqdm
@@ -17,6 +18,8 @@ from utils import *
 from trainers import *
 from pathlib import Path
 from datetime import datetime
+import pickle
+
 
 def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_features, val_labels, clip_weights, clip_model, shots_path, label_mapping=None, device='cuda:0'):
     """
@@ -36,8 +39,8 @@ def run(classifier, cfg, train_loader_cache, test_features, test_labels, val_fea
                 with torch.no_grad():  
                     image_features = clip_model.encode_image(image)
                 image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-                vecs.append(image_features)
-                labels.append(target)
+                vecs.append(image_features.cpu())
+                labels.append(target.cpu())
         vecs = torch.cat(vecs)
         labels = torch.cat(labels)
         torch.save({'vecs':vecs.cpu(), 'labels':labels.cpu()}, shots_path)
@@ -111,8 +114,42 @@ def main(args):
                     test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)   
                     classnames, template = None, None
                 except: 
-                    dataset = ImageNet(cfg, cfg['root_path'], cfg['shots'], preprocess)
+                    
+                    pickle_file = os.path.join(shots_path, f'dataset_s{seed}_k{shots}.pkl')
+                    if os.path.exists(pickle_file):
+                      print(f"Loading subsampled dataset from {pickle_file}")
+                      dataset = ImageNet(cfg, cfg['root_path'], -1, preprocess)  # -1 so no subsampling inside
+                      with open(pickle_file, 'rb') as f:
+                        subset_data = pickle.load(f)
+                        dataset.train.samples = subset_data['train_samples']
+                        dataset.train.targets = subset_data['train_targets']
+                    else:
+                      print("No saved pickle found, creating ImageNet and subsampling...")
+                      random.seed(seed)
+                      dataset = ImageNet(cfg, cfg['root_path'], shots, preprocess)
+                      # Save the subsampled dataset
+                      subset_data = {
+                          'train_samples': dataset.train.samples,
+                          'train_targets': dataset.train.targets,
+                      }
+                      with open(pickle_file, 'wb') as f:
+                          pickle.dump(subset_data, f)
+                      print(f"Subsampled dataset saved to {pickle_file}")
+
+                  
                     train_loader_cache = torch.utils.data.DataLoader(dataset.train, batch_size=256, num_workers=8, shuffle=False)
+
+                    # -  save dataset images
+                    #materialize_imagenet_subset(dataset, dst_root=os.path.join(args.dataset_path, 'imagenet_fewshot'))
+                    remap_dataset_paths(dataset.train,
+                      old_root="/Users/oarif/Documents",
+                      new_root="/workspace")
+
+                    remap_dataset_paths(dataset.test,
+                      old_root="/Users/oarif/Documents",
+                      new_root="/workspace")
+
+                
                     test_loader = torch.utils.data.DataLoader(dataset.test, batch_size=64, num_workers=8, shuffle=False)
                     test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)   
                     classnames, template = dataset.classnames, dataset.template

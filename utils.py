@@ -9,6 +9,10 @@ import argparse
 import os
 import json
 import math 
+import os
+import shutil
+from typing import List, Tuple
+
 
 class SmartFormatter(argparse.HelpFormatter):
     """
@@ -49,6 +53,7 @@ def cls_acc(output, target, topk=1):
     pred = output.topk(topk, 1, True, True)[1].t()
     correct = pred.eq(target.view(1, -1).expand_as(pred))
     acc = float(correct[: topk].reshape(-1).float().sum(0, keepdim=True).cpu().numpy())
+    #acc = float(correct[: topk].reshape(-1).float().sum(0).cpu().numpy())
     acc = 100 * acc / target.shape[0]
     return acc
 
@@ -226,3 +231,65 @@ def validate(model, val_features, batch_size=256, device='cuda:0'):
             val_batch = val_features[i*batch_size:(i+1)*batch_size].float().to(device)
             val_logits.append(model(val_batch).cpu())
     return torch.cat(val_logits)
+
+
+# ---------------------------------
+
+def _copy_samples(
+    samples: List[Tuple[str, int]],
+    src_split_dir: str,
+    dst_split_dir: str,
+):
+    """
+    Copy ImageFolder samples while preserving directory structure.
+
+    Args:
+        samples: list of (img_path, class_idx)
+        src_split_dir: e.g. /data/imagenet/images/train
+        dst_split_dir: e.g. /data/imagenet_fewshot/images/train
+    """
+    for src_path, _ in samples:
+        # Compute relative path w.r.t. train/ or val/
+        rel_path = os.path.relpath(src_path, src_split_dir)
+        dst_path = os.path.join(dst_split_dir, rel_path)
+
+        # Create parent directory if needed
+        os.makedirs(os.path.dirname(dst_path), exist_ok=True)
+
+        # Skip if already copied
+        if os.path.exists(dst_path):
+            continue
+
+        shutil.copy2(src_path, dst_path)
+
+
+def materialize_imagenet_subset(
+    imagenet_dataset,
+    dst_root: str,
+):
+    """
+    Copy the selected ImageNet subset (few-shot / base / new) to disk. only training part
+
+    Args:
+        imagenet_dataset: instantiated ImageNet object (your class)
+        dst_root: root directory where the new dataset will be written
+                  e.g. /data/imagenet_fewshot
+    """
+    src_image_dir = imagenet_dataset.image_dir
+    dst_image_dir = os.path.join(dst_root, 'images')
+
+    # Train
+    _copy_samples(
+        samples=imagenet_dataset.train.samples,
+        src_split_dir=os.path.join(src_image_dir, 'train'),
+        dst_split_dir=os.path.join(dst_image_dir, 'train'),
+    )
+
+
+def remap_dataset_paths(dataset, old_root, new_root):
+    new_samples = []
+    for path, label in dataset.samples:
+        new_path = path.replace(old_root, new_root, 1)
+        new_samples.append((new_path, label))
+    dataset.samples = new_samples
+    dataset.imgs = new_samples  # ImageFolder alias
