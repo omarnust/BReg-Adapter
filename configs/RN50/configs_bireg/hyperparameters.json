@@ -1,0 +1,6 @@
+{"1": {"beta":3, "lmbda":0.05, "gamma":0.02},
+ "2": {"beta":2.6, "lmbda":0.05, "gamma":0.02},
+ "4": {"beta":1.5, "lmbda":0.05, "gamma":0.02,
+ "8": {"beta":1.66, "lmbda":0.07, "gamma":0.02},
+ "16": {"beta":1.7, "lmbda":0.1, "gamma":0.02}
+}
