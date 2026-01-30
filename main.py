@@ -111,15 +111,16 @@ def main(args):
                   val_features, val_labels = None, None
                 classnames, template = dataset.classnames, dataset.template
             else: # imagenet
+                dataset_shots_path = os.path.join(args.shots_path, cfg['dataset'])
                 try: 
-                    if not os.path.exists(os.path.join(shots_path, f'shots_s{seed}_k{shots}.pt')):
+                    if not os.path.exists(os.path.join(dataset_shots_path, f'shots_s{seed}_k{shots}.pt')):
                         assert 1==2, 'get a loader'
                     train_loader_cache, test_loader = None, None
                     test_features, test_labels = pre_load_features(clip_model, test_loader, load_path=os.path.join(test_path, f'test.pt'), device=args.device)   
                     classnames, template = None, None
                 except: 
                     
-                    pickle_file = os.path.join(shots_path, f'dataset_s{seed}_k{shots}.pkl')
+                    pickle_file = os.path.join(dataset_shots_path, f'dataset_s{seed}_k{shots}.pkl')
                     if os.path.exists(pickle_file):
                       print(f"Loading subsampled dataset from {pickle_file}")
                       dataset = ImageNet(cfg, cfg['root_path'], -1, preprocess)  # -1 so no subsampling inside
