@@ -71,6 +71,11 @@ def BiReg(vecs, labels, val_features, val_labels, test_features, clip_weights, d
                             best_beta = beta
                             best_gamma = gamma
                             best_lmbda = lmbda
+                        
+                        # clean up cuda memory
+                        if device == 'cuda':
+                            torch.cuda.empty_cache()
+
             
             best_hp = {
                 'beta': best_beta.item() if torch.is_tensor(best_beta) else best_beta,
