@@ -1,6 +1,6 @@
-{"1": {"beta":3, "lmbda":0.05, "gamma":0.001},
- "2": {"beta":2.6, "lmbda":0.05, "gamma":0.001},
- "4": {"beta":1.5, "lmbda":0.05, "gamma":0.0001},
- "8": {"beta":1.66, "lmbda":0.1, "gamma":0.0001},
- "16": {"beta":1.7, "lmbda":0.2, "gamma":0.00001}
+{"1": {"beta":3, "lmbda":0.05, "gamma":0.1},
+ "2": {"beta":2.6, "lmbda":0.05, "gamma":0.1},
+ "4": {"beta":1.5, "lmbda":0.05, "gamma":0.1},
+ "8": {"beta":1.66, "lmbda":0.07, "gamma":0.1},
+ "16": {"beta":1.7, "lmbda":0.1,  "gamma":0.1}
 }
